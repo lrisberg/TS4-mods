@@ -3,6 +3,9 @@ import os.path
 import re
 
 def copy_files_with_replace(src, filenames, dest):
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    os.makedirs(dest)
     for (filename, regex, subst) in filenames:
         src_path = os.path.join(src, filename)
         dest_path = os.path.join(dest, filename)
