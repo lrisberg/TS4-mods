@@ -11,15 +11,18 @@ def copy_files_with_replace(src, replacements, dest):
     for filename in filenames:
         src_path = os.path.join(src, filename)
         dest_path = os.path.join(dest, filename)
+
         with open(src_path, "r") as in_file:
-            data = in_file.read()
+            src_data = in_file.read()
+
+        replaced_data = src_data
         for (regex, subst) in replacements:
-            result = re.sub(regex, subst, data, 0)
-            if result:
-                data = result
-        with open(dest_path, "w") as out_file:
-            out_file.write(data)
-            out_file.close()
+            replaced_data = re.sub(regex, subst, replaced_data, 0)
+
+        if src_data != replaced_data:
+            with open(dest_path, "w") as out_file:
+                out_file.write(replaced_data)
+                out_file.close()
 
 
 def apply_renames(src, renames, dest):
