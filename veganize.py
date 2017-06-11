@@ -2,6 +2,7 @@ import shutil
 import os.path
 import re
 
+
 def copy_files_with_replace(src, replacements, dest):
     if os.path.exists(dest):
         shutil.rmtree(dest)
@@ -20,9 +21,19 @@ def copy_files_with_replace(src, replacements, dest):
             out_file.write(data)
             out_file.close()
 
-food_replacements = [
-    (r"0xA70D623E[^>]*>", '0x3D94FDEF<!--Avocado Toast-->')
+
+def apply_renames(src, renames, dest):
+    replacements = []
+    for (old_hash, old_name, new_hash, new_name) in renames:
+        regex = r"" + old_hash + r"[^>]*>"
+        subst = new_hash + '<!-- ' + new_name + ' -->'
+        replacements.append((regex, subst))
+    copy_files_with_replace(src, replacements, dest)
+
+food_renames = [
+    ('0xA70D623E', 'Eggs and Toast', '0x3D94FDEF', 'Avocado Toast')
 ]
 
 if __name__ == "__main__":
-    copy_files_with_replace('SampleInputs', food_replacements, 'Outputs')
+    # copy_files_with_replace('SampleInputs', food_replacements, 'Outputs')
+    apply_renames('SampleInputs', food_renames, 'Outputs')
