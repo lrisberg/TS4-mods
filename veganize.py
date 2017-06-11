@@ -30,14 +30,27 @@ def calculate_hash(phrase):
     hashed = hex(fnv1_32(bytes(lower_case, 'utf-8'))).upper()
     return '0x' + hashed[2:]
 
+def find_hash(src, phrase):
+    filenames = os.listdir(src)
+    for filename in filenames:
+        src_path = os.path.join(src, filename)
+
+        with open(src_path, "r") as in_file:
+            src_data = in_file.read()
+
+        regex = r"(0x[0-9A-F]{8})<!--\s?" + phrase + "\s?-->"
+
+        matches = re.finditer(regex, src_data)
+
+        for matchNum, match in enumerate(matches):
+            return match.groups()[0]
+
 
 def apply_renames(src, renames, dest):
     replacements = []
     for (old_name, new_name) in renames:
-        old_hash = calculate_hash(old_name)
-        print(old_name, old_hash)
+        old_hash = find_hash(src, old_name)
         new_hash = calculate_hash(new_name)
-        print(new_name, new_hash)
         regex = r"" + old_hash + r"[^>]*>"
         subst = new_hash + '<!-- ' + new_name + ' -->'
         replacements.append((regex, subst))
