@@ -1,7 +1,7 @@
 import shutil
 import os.path
 import re
-
+from fnvhash import fnv1_32
 
 def copy_files_with_replace(src, replacements, dest):
     if os.path.exists(dest):
@@ -25,18 +25,27 @@ def copy_files_with_replace(src, replacements, dest):
                 out_file.close()
 
 
+def calculate_hash(phrase):
+    lower_case = phrase.lower()
+    hashed = hex(fnv1_32(bytes(lower_case, 'utf-8'))).upper()
+    return '0x' + hashed[2:]
+
+
 def apply_renames(src, renames, dest):
     replacements = []
-    for (old_hash, old_name, new_hash, new_name) in renames:
+    for (old_name, new_name) in renames:
+        old_hash = calculate_hash(old_name)
+        print(old_name, old_hash)
+        new_hash = calculate_hash(new_name)
+        print(new_name, new_hash)
         regex = r"" + old_hash + r"[^>]*>"
         subst = new_hash + '<!-- ' + new_name + ' -->'
         replacements.append((regex, subst))
     copy_files_with_replace(src, replacements, dest)
 
 food_renames = [
-    ('0xA70D623E', 'Eggs and Toast', '0x3D94FDEF', 'Avocado Toast')
+    ('Eggs and Toast', 'Avocado Toast')
 ]
 
 if __name__ == "__main__":
-    # copy_files_with_replace('SampleInputs', food_replacements, 'Outputs')
     apply_renames('SampleInputs', food_renames, 'Outputs')
