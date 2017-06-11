@@ -44,6 +44,7 @@ def find_hash(src, phrase):
 
         for matchNum, match in enumerate(matches):
             return match.groups()[0]
+    print('No hash for ' + phrase)
 
 
 def apply_renames(src, renames, dest):
@@ -51,14 +52,37 @@ def apply_renames(src, renames, dest):
     for (old_name, new_name) in renames:
         old_hash = find_hash(src, old_name)
         new_hash = calculate_hash(new_name)
-        regex = r"" + old_hash + r"[^>]*>"
+        print(new_name, new_hash)
+        regex = r"" + old_hash + r"(<!--.*-->)?"
         subst = new_hash + '<!-- ' + new_name + ' -->'
         replacements.append((regex, subst))
     copy_files_with_replace(src, replacements, dest)
 
 food_renames = [
-    ('Eggs and Toast', 'Avocado Toast')
+    ('Milk', 'Soymilk'),
+    ('Yogurt', 'Almond Yogurt'),
+    ('Eggs and Toast', 'Avocado Toast'),
+    ('Fish Tacos', 'Tofish Tacos'),
+    ('Grilled Cheese', 'Grilled Chao'),
+    ('Scrambled Eggs with Bacon', 'Tofu Scramble with Facon'),
+    ('BLT', 'VBLT'),
+    ('Steak', 'Seitan Steak'),
+    ('Fruit & Yogurt Parfait', 'Soy Yogurt Parfait'),
+    ('Mac and Cheese', 'Mac and Cheeze'),
+    ('Hamburger Cake', 'Veggieburger Cake'),
+    ('Pan Fried Tilapia', 'Pan Fried Tempeh'),
+    ('Fish and Chips', 'Tofish and Chips'),
+    ('Omelet', 'Chickpea Omelet'),
+    ('Herb-Crusted Salmon', 'Herb-Crusted Tempeh'),
+    ('Chicken Stir Fry', 'Tofu Stir Fry'),
+    ('Hamburger', 'Beyond Burger'),
+    ('Hot Dogs', 'Carrot Dogs'),
+    ('Tuna Casserole', 'Chickpea-Tuna Casserole'),
+    ('Blackened Bass', 'Blackened Tempeh'),
+    ('SimCity Cheesecake', 'SimCity Cheezecake'),
+    ('The Baconing Cupcakes', 'The Seitaning Cupcakes'),
+    ('The Baconing Cupcake', 'The Seitaning Cupcake')
 ]
 
 if __name__ == "__main__":
-    apply_renames('SampleInputs', food_renames, 'Outputs')
+    apply_renames('6_01_17', food_renames, 'Outputs')
